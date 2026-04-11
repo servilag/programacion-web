@@ -9,7 +9,8 @@
     <style></style>
 </head>
 <body><div class="container">
-    <h1>Lista tareas</h1>
+    <a href='{% url 'create_task' %}'> Crear Tarea</a>
+    <h2>Lista tareas</h2>
         
         <table class="table table-striped table-bordered text-center table-hover">
     <thead class="table-dark">
@@ -18,6 +19,7 @@
         <th>Título</th>
         <th>Completada</th>
         <th>Fecha Creación</th>
+        <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -27,8 +29,14 @@
         <td>{{ task.title }}</td>
         <td>{% if task.completed %}✅{% else %}❌{% endif %}</td>
         <td>{{ task.created_at|date:"d/m/Y" }}</td>
-        </tr>
+        <td><l1>
+            <a href='{% url 'update_task' task.id %}'>  Actualizar Tarea  </a> |
+            <a href='{% url 'delete_task' task.id %}'>Eliminar Tarea</a> 
+        </l1></td>
+        </tr> 
+        
         {% endfor %}
+
     </tbody>
 </table>
 </div>
