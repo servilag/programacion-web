@@ -30,8 +30,8 @@
         <td>{% if task.completed %}✅{% else %}❌{% endif %}</td>
         <td>{{ task.created_at|date:"d/m/Y" }}</td>
         <td><l1>
-            <a href='{% url 'update_task' task.id %}'>  Actualizar Tarea  </a>
-            <a href='{% url 'delete_task' task.id %}'>Eliminar Tarea</a>
+            <a href='{% url 'update_task' task.id %}'>  Actualizar Tarea  </a> |
+            <a href='{% url 'delete_task' task.id %}'>Eliminar Tarea</a> 
         </l1></td>
         </tr> 
         

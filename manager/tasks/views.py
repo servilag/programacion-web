@@ -15,7 +15,7 @@ def create_task(request):
     
     if form.is_valid():
         form.save()
-        return redirect('task_list')
+        return redirect('tasks_list')
         
     return render(request, 'tasks/create.html',{'form':form,'creando':True})
 
@@ -24,11 +24,11 @@ def update_task(request,task_id):
     
     task = Task.objects.get(id=task_id)
     
-    form = TaskForm(request.POST or None,instance=Task)
+    form = TaskForm(request.POST or None,instance=task)
     
     if form.is_valid():
         form.save()
-        return redirect('task_list')
+        return redirect('tasks_list')
         
     return render(request, 'tasks/create.html',{'form':form,'creando':False})
 
@@ -37,6 +37,6 @@ def delete_task(request,task_id):
     task= Task.objects.get(id=task_id)
     if request.method == 'POST':
         task.delete()
-        return redirect('task_list')
+        return redirect('tasks_list')
     
     return render(request, 'tasks/delete.html',{'task':task})
