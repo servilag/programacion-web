@@ -1,0 +1,17 @@
+{% extends 'post/base.html' %}
+{% load static %}
+
+{% block extra_head %} 
+<title>Editar Publicación</title>
+<link rel="stylesheet" href="{% static 'post/css/formulario_blog.css' %}">
+{% endblock extra_head%}
+
+{% block content %}
+<div class="form-container">
+    <h2>Editar Publicación</h2>
+    <form method="POST">
+        {% csrf_token %} 
+       {{form.as_p}}<button type="submit">Guardar Post</button>
+    </form>
+</div>
+{% endblock content%}

@@ -1,0 +1,112 @@
+{% extends 'post/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<title>{{ post.title }} | WikiLibros</title>
+<style>
+    .wiki-entry-title { font-family: 'Libre Baskerville', serif; font-weight: 700; border-bottom: 2px solid #212529; padding-bottom: 10px; }
+    .book-sidebar { background-color: #f8f9fa; border-left: 4px solid #dee2e6; padding: 20px; border-radius: 4px; }
+    .comment-card { border-left: 3px solid #0d6efd; background-color: white; margin-bottom: 15px; }
+    .post-content { line-height: 1.8; font-size: 1.1rem; color: #333; }
+    .img-detail { box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 100%; height: auto; border-radius: 8px; }
+
+    
+    /* Esto forzará a todos los textareas dentro del form a verse como Bootstrap */
+    .comentarios-section textarea {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+    
+    .comentarios-section textarea:focus {
+        border-color: #86b7fe;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .25);
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<article class="detalle-publicacion">
+    <header class="mb-4">
+        <h1 class="wiki-entry-title mb-3">{{ post.title }}</h1>
+        <div class="d-flex flex-wrap gap-2 mb-4">
+            <span class="badge bg-dark">📖 {{ post.category.name|default:"General" }}</span>
+            <span class="badge bg-secondary">📄 {{ post.pages }} páginas</span>
+        </div>
+    </header>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            {% if post.image %}
+                <img src="{{ post.image.url }}" class="img-detail mb-3" alt="{{ post.title }}">
+            {% endif %}
+            
+            <div class="book-sidebar shadow-sm">
+                <h6 class="fw-bold text-uppercase small text-muted">Información de la entrada</h6>
+                <p class="mb-1 small"><strong>Colaborador:</strong> {{ post.author.username }}</p>
+                <p class="mb-1 small"><strong>Fecha:</strong> {{ post.created_at|date:"d M Y" }}</p>
+                <hr>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'publicaciones' %}" class="btn btn-sm btn-outline-dark">Volver al catálogo</a>
+                    {% if user.is_authenticated and user == post.author or user.is_superuser %}
+                        <a href="{% url 'editar_publicacion' post.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                        <a href="{% url 'eliminar_publicacion' post.id %}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="post-content mb-5">
+                {{ post.content|linebreaks }}
+            </div>
+
+            <section class="comentarios-section mt-5 border-top pt-4">
+                <h3 class="h4 mb-4">🗨️ Discusión y Reseñas</h3>
+                
+                {% for comentario in comentarios %}
+                    <div class="card comment-card shadow-sm mb-3">
+                        <div class="card-body py-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="fw-bold text-primary">@{{ comentario.author.username }}</span>
+                                <small class="text-muted">{{ comentario.created_at|date:"d M Y H:i" }}</small>
+                            </div>
+                            <p class="card-text mb-0">{{ comentario.content }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="alert alert-light border">No hay comentarios aún. ¡Sé el primero en compartir tu opinión!</div>
+                {% endfor %}
+
+                {% if user.is_authenticated %}
+                    <div class="card bg-light border-0 mt-4">
+                        <div class="card-body">
+                            <h5 class="card-title h6 mb-3">Deja tu comentario:</h5>
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ form.content }} </div>
+                                <button type="submit" class="btn btn-dark btn-sm px-4">Publicar</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center p-4">
+                        <p class="small text-muted">Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar.</p>
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+</article>
+{% endblock %}

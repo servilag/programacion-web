@@ -1,0 +1,118 @@
+{% extends 'post/base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<title>WikiLibros | Tu Biblioteca Digital</title>
+<link rel="stylesheet" href="{% static 'post/css/index.css' %}">
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=1350&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 80px 0;
+        border-radius: 12px;
+        margin-bottom: 40px;
+    }
+    .card-book {
+        border: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        height: 100%;
+    }
+    .card-book:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    .book-cover-preview {
+        height: 200px;
+        object-fit: cover;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    .section-title {
+        font-family: 'Libre Baskerville', serif;
+        border-left: 5px solid #212529;
+        padding-left: 15px;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center shadow">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Bienvenido a WikiLibros</h1>
+        <p class="lead">La enciclopedia colaborativa de literatura creada por la comunidad.</p>
+        <div class="mt-4">
+            <a href="{% url 'categorias' %}" class="btn btn-light btn-lg px-4 me-2">Explorar Géneros</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'nueva_publicacion' %}" class="btn btn-outline-light btn-lg px-4">Añadir un Libro</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid px-0">
+    <h2 class="section-title h3">Últimas Entradas Añadidas</h2>
+    
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for post in publicaciones_recientes %}
+            <div class="col">
+                <div class="card card-book shadow-sm">
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="card-img-top book-cover-preview" alt="{{ post.title }}">
+                    {% else %}
+                        <div class="bg-light d-flex align-items-center justify-content-center book-cover-preview">
+                            <span class="text-muted">Sin portada disponible</span>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h5 class="card-title fw-bold mb-0">
+                                <a href="{% url 'detalle_publicacion' post.id %}" class="text-decoration-none text-dark">
+                                    {{ post.title }}
+                                </a>
+                            </h5>
+                        </div>
+                        
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-person"></i> {{ post.author.username }} | 
+                            <i class="bi bi-calendar"></i> {{ post.created_at|date:"d M, Y" }}
+                        </p>
+                        
+                        <p class="card-text text-secondary small">
+                            {{ post.content|truncatewords:20 }}
+                        </p>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent border-top-0 pb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-light text-dark border">📄 {{ post.pages }} págs</span>
+                            <a href="{% url 'detalle_publicacion' post.id %}" class="btn btn-sm btn-dark">Leer más</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center">
+                    Todavía no hay publicaciones. ¡Sé el primero en colaborar!
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-5 p-4 bg-light rounded shadow-sm border">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h4 class="fw-bold">¿No encuentras un libro?</h4>
+            <p class="text-secondary mb-0">Esta wiki crece gracias a personas como tú. Si tienes información sobre una obra, ¡compártela con el resto del mundo!</p>
+        </div>
+        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <a href="{% url 'nueva_publicacion' %}" class="btn btn-primary px-4">Escribir Reseña</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
